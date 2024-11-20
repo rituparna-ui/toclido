@@ -7,4 +7,9 @@ export default defineNuxtConfig({
     prefix: "",
     componentDir: "./components/ui",
   },
+  runtimeConfig: {
+    public: {
+      baseAPI: "http://localhost:3000/api",
+    },
+  },
 });
