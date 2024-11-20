@@ -1,5 +1,7 @@
 <template>
   <div class="flex-grow flex justify-center items-center">
-    <div>Signup Component</div>
+    <div>
+      <Button>Click me</Button>
+    </div>
   </div>
 </template>
