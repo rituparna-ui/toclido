@@ -2,34 +2,13 @@
   <div class="p-8">
     <h1 class="text-center text-2xl">My TODOs</h1>
     <div class="w-full lg:w-1/2 mx-auto">
-      <Accordion type="single" collapsible>
-        <AccordionItem v-for="todo in todos" :key="todo._id" :value="todo._id">
-          <AccordionTrigger
-            :class="[todo.completed ? 'line-through text-green-400' : '']"
-          >
-            {{ todo.title }}
-          </AccordionTrigger>
-          <AccordionContent class="flex justify-between items-center">
-            <div>{{ todo.description }}</div>
-            <div>
-              <Badge :variant="todo.completed ? '' : 'destructive'">
-                {{ todo.completed ? "Completed" : "Incomplete" }}
-              </Badge>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+      <TodosNew />
+      <TodosItem v-for="todo in todos" :key="todo._id" :todo="todo" />
     </div>
   </div>
 </template>
 
 <script setup>
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 const runtimeConfig = useRuntimeConfig();
 const baseUrl = runtimeConfig.public.baseAPI;
@@ -39,8 +18,7 @@ definePageMeta({
 });
 
 const token = useCookie("token");
-const todos = useState("todos", () => []);
-
+const { todos } = useTodos();
 const { data } = await useFetch(baseUrl + "/todos", {
   method: "GET",
   headers: {
