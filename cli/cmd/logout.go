@@ -8,10 +8,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// statusCmd represents the status command
-var statusCmd = &cobra.Command{
-	Use:   "status",
-	Short: "Check authentication status",
+// logoutCmd represents the logout command
+var logoutCmd = &cobra.Command{
+	Use:   "logout",
+	Short: "Logout from the CLI",
 	Run: func(cmd *cobra.Command, args []string) {
 		dirname, err := os.UserHomeDir()
 		if err != nil {
@@ -28,7 +28,8 @@ var statusCmd = &cobra.Command{
 			var p Payload
 			json.NewDecoder(file).Decode(&p)
 			user := p.User
-			fmt.Println("\nLogged in as " + user + "\n")
+			fmt.Println("\nLogged out from " + user + "\n")
+			os.Remove(dirname + "/.toclido-cli")
 		} else {
 			fmt.Println("Not logged in")
 			fmt.Println("Run \"toclido auth login\" to login")
@@ -37,15 +38,15 @@ var statusCmd = &cobra.Command{
 }
 
 func init() {
-	authCmd.AddCommand(statusCmd)
+	authCmd.AddCommand(logoutCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// statusCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// logoutCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// statusCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// logoutCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
