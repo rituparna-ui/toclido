@@ -26,10 +26,12 @@ const { logout } = useAuth();
     <DropdownMenuContent>
       <DropdownMenuLabel>My Account</DropdownMenuLabel>
       <DropdownMenuSeparator />
-      <DropdownMenuItem>Profile</DropdownMenuItem>
-      <DropdownMenuItem>
-        <NuxtLink to="/settings">Settings</NuxtLink>
-      </DropdownMenuItem>
+      <NuxtLink to="/">
+        <DropdownMenuItem> Home </DropdownMenuItem>
+      </NuxtLink>
+      <NuxtLink to="/settings">
+        <DropdownMenuItem> Settings </DropdownMenuItem>
+      </NuxtLink>
       <DropdownMenuItem @click="logout">Logout</DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
