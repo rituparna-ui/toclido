@@ -1,4 +1,5 @@
 const sshpk = require("sshpk");
+const jwt = require("jsonwebtoken");
 
 const SSHKey = require("./../models/ssh-key");
 
@@ -61,6 +62,32 @@ exports.getSshKeys = async (req, res) => {
     });
     return res.json({
       sshKeys,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server",
+      errorMessage: error.message,
+      error,
+    });
+  }
+};
+
+exports.getUserTokenFromKey = async (req, res) => {
+  try {
+    const { publicKey } = req.body;
+    if (!publicKey) {
+      return res.status(400).json({ message: "Please provide all the fields" });
+    }
+
+    const sshKey = await SSHKey.findOne({ publicKey }).populate("user", "_id");
+    if (!sshKey) {
+      return res.status(400).json({ message: "Invalid public key" });
+    }
+    console.log(sshKey);
+
+    const token = jwt.sign({ id: sshKey.user._id }, "SeCrEtKeY");
+    return res.json({
+      token,
     });
   } catch (error) {
     return res.status(500).json({
