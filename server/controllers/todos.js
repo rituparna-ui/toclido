@@ -62,3 +62,23 @@ exports.deleteTodo = async (req, res) => {
     });
   }
 };
+
+exports.toggleStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const todo = await Todo.findOne({ _id: id });
+    todo.completed = !todo.completed;
+    await todo.save();
+    return res.json({
+      message:
+        "Todo marked as " + (todo.completed ? "completed" : "incomplete"),
+      todo,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server",
+      errorMessage: error.message,
+      error,
+    });
+  }
+};

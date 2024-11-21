@@ -15,12 +15,7 @@
         {{ todo.description }}
       </div>
       <div class="flex justify-between items-center">
-        <Button
-          variant="secondary"
-          @click="
-            todo.completed ? uncompleteTodo(todo._id) : completeTodo(todo._id)
-          "
-        >
+        <Button variant="secondary" @click="toggleStatus(todo._id)">
           {{ todo.completed ? "Mark Incomplete" : "Mark Completed" }}
         </Button>
         <Button variant="destructive" @click="deleteTodo(todo._id)">
@@ -57,9 +52,25 @@ const toggleDesc = () => {
   descHidden.value = !descHidden.value;
 };
 
-const uncompleteTodo = async (id) => {};
-
-const completeTodo = async (id) => {};
+const toggleStatus = async (id) => {
+  try {
+    const data = await $fetch(baseUrl + "/todos/toggle-status/" + id, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+      },
+    });
+    toast.success(data.message);
+    todos.value = todos.value.map((todo) => {
+      if (todo._id === id) {
+        todo.completed = !todo.completed;
+      }
+      return todo;
+    });
+  } catch (error) {
+    toast.error(error.data.message);
+  }
+};
 
 const deleteTodo = async (id) => {
   try {
