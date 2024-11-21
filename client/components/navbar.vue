@@ -9,7 +9,7 @@
         <NuxtLink to="/auth/signup">Signup</NuxtLink>
       </div>
       <div class="flex gap-4" v-else>
-        <Button variant="secondary" @click="logout">Logout</Button>
+        <NavbarProfile />
       </div>
     </nav>
   </div>
@@ -19,5 +19,5 @@
 import { useAuth } from "@/composables/useAuth";
 import { Button } from "@/components/ui/button";
 
-const { authState, logout } = useAuth();
+const { authState } = useAuth();
 </script>

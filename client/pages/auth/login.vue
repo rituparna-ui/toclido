@@ -45,7 +45,7 @@ import { toast } from "vue-sonner";
 import { useAuth } from "@/composables/useAuth";
 
 const { authState } = useAuth();
-
+const route = useRoute();
 const token = useCookie("token");
 
 const login = async (e) => {
@@ -63,7 +63,11 @@ const login = async (e) => {
     toast.success(data.message);
     token.value = data.token;
     authState.value.isAuth = true;
-    navigateTo("/");
+    if (route.query.redirect) {
+      navigateTo(route.query.redirect);
+    } else {
+      navigateTo("/");
+    }
   } catch (error) {
     toast.error(error.data.message);
   }
