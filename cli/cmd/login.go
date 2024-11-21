@@ -42,7 +42,24 @@ func enableCors(w *http.ResponseWriter) {
 }
 
 func login(cmd *cobra.Command, args []string) {
-	// check if user is already logged in
+	dirname, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	if _, err := os.Stat(dirname + "/.toclido-cli"); err == nil {
+		file, err := os.Open(dirname + "/.toclido-cli")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		defer file.Close()
+		var p Payload
+		json.NewDecoder(file).Decode(&p)
+		user := p.User
+		fmt.Println("\nAlready logged in as " + user + "\n")
+		return
+	}
 	fmt.Println("Open the following URL in your browser:")
 	fmt.Println("")
 	fmt.Println("\thttp://localhost:3001/auth/cli/login")
