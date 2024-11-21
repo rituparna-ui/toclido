@@ -14,6 +14,7 @@
         <TabsContent value="account">
           <div>
             <SettingsSshAdd />
+            <SettingsSshList />
           </div>
         </TabsContent>
         <TabsContent value="password">

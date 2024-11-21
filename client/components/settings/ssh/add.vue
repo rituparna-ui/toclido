@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="my-8">
     <form class="flex flex-col gap-4" @submit.prevent="createSshKey">
       <Input
         type="text"
@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "vue-sonner";
 
 const token = useCookie("token");
+const { sshKeys } = useSshKeys();
 
 const createSshKey = async (e) => {
   const formData = new FormData(e.target);
@@ -46,6 +47,7 @@ const createSshKey = async (e) => {
       },
     });
     toast.success(data.message);
+    sshKeys.value = [data.sshKey, ...sshKeys.value];
     e.target.reset();
   } catch (error) {
     toast.error(error.data.message);

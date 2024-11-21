@@ -5,10 +5,11 @@ const SSHKey = require("./../models/ssh-key");
 
 exports.createSshKey = async (req, res) => {
   try {
-    const { name, publicKey } = req.body;
-    if (!name || !publicKey) {
+    const { name, publicKey: publicKeyString } = req.body;
+    if (!name || !publicKeyString) {
       return res.status(400).json({ message: "Please provide all the fields" });
     }
+    const publicKey = publicKeyString.trim();
 
     let key;
     try {
@@ -17,19 +18,30 @@ exports.createSshKey = async (req, res) => {
       return res.status(400).json({ message: "Invalid public key" });
     }
 
-    const existingKey = await SSHKey.findOne({ publicKey });
+    const existingKey = await SSHKey.findOne({ publicKey, isDeleted: false });
     if (existingKey) {
       return res.status(400).json({ message: "Key already exists" });
     }
 
-    await SSHKey.create({
+    const newkey = await SSHKey.create({
       name,
       publicKey,
       user: req.user,
     });
 
+    const parsed = {
+      type: key.type,
+      comment: key.comment,
+      fingerprint: key.fingerprint("sha256").toString("base64"),
+      size: key.size,
+    };
+
     return res.json({
       message: "SSH Key Added",
+      sshKey: {
+        ...newkey.toJSON(),
+        parsed,
+      },
     });
   } catch (error) {
     return res.status(500).json({
@@ -51,7 +63,7 @@ exports.getSshKeys = async (req, res) => {
       const parsed = {
         type: parsedKey.type,
         comment: parsedKey.comment,
-        fingerprint: parsedKey.fingerprint("sha256").toString("hex"),
+        fingerprint: parsedKey.fingerprint("sha256").toString("base64"),
         size: parsedKey.size,
       };
       return {
@@ -88,6 +100,26 @@ exports.getUserTokenFromKey = async (req, res) => {
     const token = jwt.sign({ id: sshKey.user._id }, "SeCrEtKeY");
     return res.json({
       token,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server",
+      errorMessage: error.message,
+      error,
+    });
+  }
+};
+
+exports.deleteSshKey = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sshKey = await SSHKey.findOneAndUpdate(
+      { _id: id },
+      { isDeleted: true }
+    );
+    return res.json({
+      message: "SSH Key deleted",
+      sshKey,
     });
   } catch (error) {
     return res.status(500).json({
