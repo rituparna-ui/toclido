@@ -4,7 +4,9 @@
     <div class="w-full lg:w-1/2 mx-auto">
       <Accordion type="single" collapsible>
         <AccordionItem v-for="todo in todos" :key="todo._id" :value="todo._id">
-          <AccordionTrigger>
+          <AccordionTrigger
+            :class="[todo.completed ? 'line-through text-green-400' : '']"
+          >
             {{ todo.title }}
           </AccordionTrigger>
           <AccordionContent class="flex justify-between items-center">
