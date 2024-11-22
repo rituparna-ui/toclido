@@ -18,7 +18,7 @@
           </div>
         </TabsContent>
         <TabsContent value="password">
-          <div>CLI Tokens</div>
+          <SettingsCliList />
         </TabsContent>
       </Tabs>
     </div>
