@@ -95,7 +95,6 @@ exports.getUserTokenFromKey = async (req, res) => {
     if (!sshKey) {
       return res.status(400).json({ message: "Invalid public key" });
     }
-    console.log(sshKey);
 
     const token = jwt.sign({ id: sshKey.user._id }, "SeCrEtKeY");
     return res.json({
