@@ -90,12 +90,15 @@ exports.getSshKeys = async (req, res) => {
 
 exports.getUserTokenFromKey = async (req, res) => {
   try {
-    const { publicKey } = req.body;
-    if (!publicKey) {
+    const { fingerprint } = req.body;
+    if (!fingerprint) {
       return res.status(400).json({ message: "Please provide all the fields" });
     }
 
-    const sshKey = await SSHKey.findOne({ publicKey }).populate("user", "_id");
+    const sshKey = await SSHKey.findOne({ fingerprint }).populate(
+      "user",
+      "_id"
+    );
     if (!sshKey) {
       return res.status(400).json({ message: "Invalid public key" });
     }
