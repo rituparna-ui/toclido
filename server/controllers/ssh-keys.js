@@ -27,6 +27,10 @@ exports.createSshKey = async (req, res) => {
       name,
       publicKey,
       user: req.user,
+      fingerprint: key
+        .fingerprint("sha256")
+        .toString("hex")
+        .replaceAll(":", ""),
     });
 
     const parsed = {
