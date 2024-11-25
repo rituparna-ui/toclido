@@ -28,6 +28,18 @@ type Auth struct {
 	Email string
 }
 
+type Todo struct {
+	Id          string `json:"_id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Completed   bool   `json:"completed"`
+	CreatedAt   string `json:"createdAt"`
+}
+
+type HomeView struct {
+	Todos []Todo
+}
+
 type RootModel struct {
 	Auth Auth
 
@@ -35,10 +47,14 @@ type RootModel struct {
 	Screen Screen
 
 	EntryView EntryView
+	HomeView  HomeView
 }
 
 func NewModel() RootModel {
 	return RootModel{
 		Screen: EntryScreen,
+		HomeView: HomeView{
+			Todos: []Todo{},
+		},
 	}
 }

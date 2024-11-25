@@ -43,7 +43,12 @@ func BuildWelcomeScreen(m *RootModel) string {
 }
 
 func BuildHomeScreen(m *RootModel) string {
-	return "Home Screen"
+	str := ""
+	for _, todo := range m.HomeView.Todos {
+		str += lipgloss.JoinHorizontal(lipgloss.Center, todo.Title, " : ", todo.Description)
+		str += "\n"
+	}
+	return str
 }
 
 func BuildErrorScreen(m *RootModel) string {

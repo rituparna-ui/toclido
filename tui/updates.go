@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"io"
 	"net/http"
 
@@ -13,7 +13,7 @@ func (m RootModel) Init() tea.Cmd {
 	return nil
 }
 
-type FetchTodosMsg struct{}
+type FetchTodosMsg []Todo
 
 type ErrorScreenMsg struct{}
 
@@ -34,9 +34,13 @@ func FetchTodos(m *RootModel) tea.Cmd {
 		if err != nil {
 			return ErrorScreenMsg{}
 		}
-		fmt.Println(string(body))
 
-		return FetchTodosMsg{}
+		var todos struct {
+			Todos []Todo `form:"todos"`
+		}
+		json.Unmarshal(body, &todos)
+		m.HomeView.Todos = todos.Todos
+		return FetchTodosMsg(m.HomeView.Todos)
 	}
 }
 
@@ -48,6 +52,8 @@ func (m RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case FetchTodosMsg:
 		m.Screen = "HOME_VIEW"
+		m.HomeView.Todos = msg
+		m.EntryView.spinner = spinner.New()
 		return m, nil
 
 	case ErrorScreenMsg:
