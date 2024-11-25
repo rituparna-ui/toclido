@@ -1,13 +1,17 @@
 package main
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"strings"
+
+	"github.com/charmbracelet/lipgloss"
+)
 
 func WelcomeScreen(m *RootModel) string {
 	centerText := lipgloss.JoinVertical(
 		lipgloss.Center,
-		"Hey There!",
-		"This is Ritu's Termfolio",
-		"A Terminal based Portfolio over SSH !!",
+		"Welcome back to toclido 👋, "+strings.Split(m.Auth.Name, " ")[0]+" !!!",
+		"Access all your todos right from the terminal",
+		"Logged in as: "+m.Auth.Email,
 	)
 
 	centerText = EntryTextStyle.Render(centerText)
@@ -27,11 +31,4 @@ func WelcomeScreen(m *RootModel) string {
 	}
 
 	return centerDisplay.Render(render)
-}
-
-func (m RootModel) View() string {
-	if m.Screen == EntryScreen {
-		return WelcomeScreen(&m)
-	}
-	return "Loading..."
 }

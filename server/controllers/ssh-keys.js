@@ -97,7 +97,7 @@ exports.getUserTokenFromKey = async (req, res) => {
 
     const sshKey = await SSHKey.findOne({ fingerprint }).populate(
       "user",
-      "_id"
+      "_id name email"
     );
     if (!sshKey) {
       return res.status(400).json({ message: "Invalid public key" });
@@ -106,6 +106,8 @@ exports.getUserTokenFromKey = async (req, res) => {
     const token = jwt.sign({ id: sshKey.user._id }, "SeCrEtKeY");
     return res.json({
       token,
+      name: sshKey.user.name,
+      email: sshKey.user.email,
     });
   } catch (error) {
     return res.status(500).json({

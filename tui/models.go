@@ -19,8 +19,14 @@ type EntryView struct {
 	progress   progress.Model
 }
 
-type RootModel struct {
+type Auth struct {
 	Token string
+	Name  string
+	Email string
+}
+
+type RootModel struct {
+	Auth Auth
 
 	Window Window
 	Screen Screen

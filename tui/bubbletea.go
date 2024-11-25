@@ -67,7 +67,17 @@ func bubbleTeaMiddleware() wish.Middleware {
 		}
 
 		m := NewModel()
-		json.Unmarshal(body, &m)
+		type AuthData struct {
+			Token string `json:"token"`
+			Name  string `json:"name"`
+			Email string `json:"email"`
+		}
+		var auth AuthData
+		json.Unmarshal(body, &auth)
+
+		m.Auth.Email = auth.Email
+		m.Auth.Name = auth.Name
+		m.Auth.Token = auth.Token
 		return newProgram(m, append(bubbletea.MakeOptions(s), tea.WithAltScreen())...)
 	}
 	return bubbletea.MiddlewareWithProgramHandler(teaHandler, termenv.ANSI256)
