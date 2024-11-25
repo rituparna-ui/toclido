@@ -27,7 +27,16 @@ func BuildWelcomeScreen(m *RootModel) string {
 	render := lipgloss.JoinVertical(lipgloss.Center, centerText, blinkText)
 
 	if m.EntryView.showLoader {
-		render = lipgloss.JoinVertical(lipgloss.Center, centerText, m.EntryView.progress.View())
+		render = lipgloss.JoinVertical(
+			lipgloss.Center,
+			centerText,
+			lipgloss.
+				NewStyle().
+				Width(m.Window.Width).
+				Render(
+					m.EntryView.spinner.View()+" Loading...",
+				),
+		)
 	}
 
 	return centerDisplay.Render(render)

@@ -1,6 +1,8 @@
 package main
 
-import "github.com/charmbracelet/bubbles/progress"
+import (
+	"github.com/charmbracelet/bubbles/spinner"
+)
 
 const (
 	EntryScreen Screen = "ENTRY_VIEW"
@@ -16,7 +18,7 @@ type Screen string
 
 type EntryView struct {
 	showLoader bool
-	progress   progress.Model
+	spinner    spinner.Model
 }
 
 type Auth struct {
