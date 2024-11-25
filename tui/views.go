@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-func WelcomeScreen(m *RootModel) string {
+func BuildWelcomeScreen(m *RootModel) string {
 	centerText := lipgloss.JoinVertical(
 		lipgloss.Center,
 		"Welcome back to toclido 👋, "+strings.Split(m.Auth.Name, " ")[0]+" !!!",
@@ -31,4 +31,8 @@ func WelcomeScreen(m *RootModel) string {
 	}
 
 	return centerDisplay.Render(render)
+}
+
+func BuildHomeScreen(m *RootModel) string {
+	return "Home Screen"
 }
