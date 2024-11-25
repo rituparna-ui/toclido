@@ -66,7 +66,7 @@ func bubbleTeaMiddleware() wish.Middleware {
 			return nil
 		}
 
-		var m RootModel
+		m := NewModel()
 		json.Unmarshal(body, &m)
 		return newProgram(m, append(bubbletea.MakeOptions(s), tea.WithAltScreen())...)
 	}
