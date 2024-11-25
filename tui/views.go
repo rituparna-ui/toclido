@@ -45,3 +45,21 @@ func BuildWelcomeScreen(m *RootModel) string {
 func BuildHomeScreen(m *RootModel) string {
 	return "Home Screen"
 }
+
+func BuildErrorScreen(m *RootModel) string {
+	centerText := lipgloss.
+		NewStyle().
+		Width(m.Window.Width).
+		Height(m.Window.Height).
+		AlignHorizontal(lipgloss.Center).
+		AlignVertical(lipgloss.Center)
+
+	text := lipgloss.
+		NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		Padding(1, 2).
+		Foreground(lipgloss.Color("#FF0000")).
+		Render(lipgloss.JoinVertical(lipgloss.Center, "Some Error Occured !!!", "Please retry", "Press Any Key To Exit"))
+
+	return centerText.Render(text)
+}

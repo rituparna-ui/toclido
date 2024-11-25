@@ -7,6 +7,7 @@ import (
 const (
 	EntryScreen Screen = "ENTRY_VIEW"
 	HomeScreen  Screen = "HOME_VIEW"
+	ErrorScreen Screen = "ERROR_VIEW"
 )
 
 type Window struct {
