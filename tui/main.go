@@ -12,6 +12,7 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
+	"github.com/charmbracelet/wish/logging"
 )
 
 const (
@@ -26,6 +27,10 @@ func main() {
 		wish.WithPublicKeyAuth(func(ctx ssh.Context, key ssh.PublicKey) bool {
 			return key.Type() == "ssh-ed25519"
 		}),
+		wish.WithMiddleware(
+			bubbleTeaMiddleware(),
+			logging.Middleware(),
+		),
 	)
 
 	if err != nil {
