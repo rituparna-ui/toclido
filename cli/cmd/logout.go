@@ -3,7 +3,9 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -28,6 +30,26 @@ var logoutCmd = &cobra.Command{
 			var p Payload
 			json.NewDecoder(file).Decode(&p)
 			user := p.User
+
+			payload := fmt.Sprintf(`{"token":"%s"}`, p.Token)
+
+			client := &http.Client{}
+			req, err := http.NewRequest("POST", "http://localhost:3000/api/cli-tokens/revoke", strings.NewReader(payload))
+
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(0)
+			}
+			req.Header.Add("Content-Type", "application/json")
+			req.Header.Add("Authorization", fmt.Sprintf("Cli %s", p.Token))
+
+			res, err := client.Do(req)
+
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(0)
+			}
+			defer res.Body.Close()
 			fmt.Println("\nLogged out from " + user + "\n")
 			os.Remove(dirname + "/.toclido-cli")
 		} else {
