@@ -45,10 +45,22 @@ func BuildWelcomeScreen(m *RootModel) string {
 func BuildHomeScreen(m *RootModel) string {
 	str := ""
 	for _, todo := range m.HomeView.Todos {
-		str += lipgloss.JoinHorizontal(lipgloss.Center, todo.Title, " : ", todo.Description)
+		x := " "
+		if todo.Completed {
+			x = "x"
+		}
+		str += lipgloss.JoinHorizontal(lipgloss.Center, "[", x, "] ", todo.Title, " : ", todo.Description)
 		str += "\n"
 	}
-	return str
+	fullScreen := lipgloss.
+		NewStyle().
+		Width(m.Window.Width).
+		Height(m.Window.Height - 2).
+		Render(str)
+
+	helpText := lipgloss.NewStyle().Width(m.Window.Width).Render("Press Enter to continue...")
+
+	return lipgloss.JoinVertical(lipgloss.Left, fullScreen, helpText)
 }
 
 func BuildErrorScreen(m *RootModel) string {
