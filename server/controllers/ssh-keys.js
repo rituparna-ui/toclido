@@ -95,10 +95,10 @@ exports.getUserTokenFromKey = async (req, res) => {
       return res.status(400).json({ message: "Please provide all the fields" });
     }
 
-    const sshKey = await SSHKey.findOne({ fingerprint }).populate(
-      "user",
-      "_id name email"
-    );
+    const sshKey = await SSHKey.findOne({
+      fingerprint,
+      isDeleted: false,
+    }).populate("user", "_id name email");
     if (!sshKey) {
       return res.status(400).json({ message: "Invalid public key" });
     }

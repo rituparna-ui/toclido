@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -42,25 +43,50 @@ func BuildWelcomeScreen(m *RootModel) string {
 	return centerDisplay.Render(render)
 }
 
-func BuildHomeScreen(m *RootModel) string {
-	str := ""
-	for _, todo := range m.HomeView.Todos {
+func BuildTodosList(m *RootModel) string {
+	availableHeight := m.Window.Height - 2
+
+	fullScreen := lipgloss.NewStyle().
+		Padding(1, 1).
+		Width(m.Window.Width).
+		Height(availableHeight)
+
+	todos := ""
+
+	for i, todo := range m.HomeView.Todos {
 		x := " "
 		if todo.Completed {
 			x = "x"
 		}
-		str += lipgloss.JoinHorizontal(lipgloss.Center, "[", x, "] ", todo.Title, " : ", todo.Description)
-		str += "\n"
+		todoItem := fmt.Sprintf("[%s] %s\n    %s", x, todo.Title, todo.Description)
+		isActive := m.HomeView.index == i
+
+		leftPad := 1
+		if isActive {
+			leftPad = 0
+		}
+
+		todos += lipgloss.
+			NewStyle().
+			Width(m.Window.Width-4).
+			Border(lipgloss.RoundedBorder(), isActive).
+			BorderForeground(lipgloss.Color("#008080")).
+			Padding(leftPad, 0, leftPad, leftPad).
+			Render(todoItem)
+		todos += "\n"
 	}
-	fullScreen := lipgloss.
-		NewStyle().
-		Width(m.Window.Width).
-		Height(m.Window.Height - 2).
-		Render(str)
 
-	helpText := lipgloss.NewStyle().Width(m.Window.Width).Render("Press Enter to continue...")
+	return fullScreen.Render(todos)
+}
 
-	return lipgloss.JoinVertical(lipgloss.Left, fullScreen, helpText)
+func BuildHelpMessage(m *RootModel) string {
+	return "Help Message Line 1\nHelp Message Line 2"
+}
+
+func BuildHomeScreen(m *RootModel) string {
+	helpText := BuildHelpMessage(m)
+
+	return lipgloss.JoinVertical(lipgloss.Left, BuildTodosList(m), helpText)
 }
 
 func BuildErrorScreen(m *RootModel) string {
