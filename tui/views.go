@@ -80,7 +80,14 @@ func BuildTodosList(m *RootModel) string {
 }
 
 func BuildHelpMessage(m *RootModel) string {
-	return "Help Message Line 1\nHelp Message Line 2"
+	line1 := "[up/down] to navigate          [d] to delete a todo  [r]   to refresh"
+	line2 := "[space]   to toggle completed  [a] to add a todo     [esc] to exit"
+
+	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#808080"))
+	line1 = style.Render(line1)
+	line2 = style.Render(line2)
+
+	return line1 + "\n" + line2
 }
 
 func BuildHomeScreen(m *RootModel) string {

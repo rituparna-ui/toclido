@@ -92,6 +92,8 @@ func (m RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.HomeView.index < 0 {
 					m.HomeView.index = len(m.HomeView.Todos) - 1
 				}
+			case "esc":
+				return m, tea.Quit
 			}
 		}
 
