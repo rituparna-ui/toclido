@@ -79,6 +79,22 @@ func (m RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Batch(m.EntryView.spinner.Tick, FetchTodos(&m))
 			}
 		}
+
+		if m.Screen == HomeScreen {
+			switch msg.String() {
+			case "down":
+				m.HomeView.index++
+				if m.HomeView.index >= len(m.HomeView.Todos) {
+					m.HomeView.index = 0
+				}
+			case "up":
+				m.HomeView.index--
+				if m.HomeView.index < 0 {
+					m.HomeView.index = len(m.HomeView.Todos) - 1
+				}
+			}
+		}
+
 		if m.Screen == ErrorScreen {
 			return m, tea.Quit
 		}

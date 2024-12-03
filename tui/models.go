@@ -38,6 +38,7 @@ type Todo struct {
 
 type HomeView struct {
 	Todos []Todo
+	index int
 }
 
 type RootModel struct {
