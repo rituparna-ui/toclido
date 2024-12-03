@@ -15,6 +15,8 @@ func (m RootModel) Init() tea.Cmd {
 
 type FetchTodosMsg []Todo
 
+type ToggleTodoMsg Todo
+
 type ErrorScreenMsg struct{}
 
 func FetchTodos(m *RootModel) tea.Cmd {
@@ -41,6 +43,34 @@ func FetchTodos(m *RootModel) tea.Cmd {
 		json.Unmarshal(body, &todos)
 		m.HomeView.Todos = todos.Todos
 		return FetchTodosMsg(m.HomeView.Todos)
+	}
+}
+
+func ToggleTodo(m *RootModel) tea.Cmd {
+	return func() tea.Msg {
+		client := &http.Client{}
+		url := "http://localhost:3000/api/todos/toggle-status/" + m.HomeView.Todos[m.HomeView.index].Id
+		req, err := http.NewRequest("PATCH", url, nil)
+		if err != nil {
+			return ErrorScreenMsg{}
+		}
+		req.Header.Add("Authorization", "Bearer "+m.Auth.Token)
+		res, err := client.Do(req)
+		if err != nil {
+			return ErrorScreenMsg{}
+		}
+		defer res.Body.Close()
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			return ErrorScreenMsg{}
+		}
+
+		var todo struct {
+			Todo Todo `form:"todo"`
+		}
+		json.Unmarshal(body, &todo)
+		m.HomeView.Todos[m.HomeView.index] = todo.Todo
+		return ToggleTodoMsg{}
 	}
 }
 
@@ -94,6 +124,8 @@ func (m RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			case "esc":
 				return m, tea.Quit
+			case " ":
+				return m, tea.Cmd(ToggleTodo(&m))
 			}
 		}
 
