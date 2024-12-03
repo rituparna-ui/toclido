@@ -15,6 +15,10 @@ func (m RootModel) Init() tea.Cmd {
 
 type FetchTodosMsg []Todo
 
+type ToggleTodoMsg Todo
+
+type DeleteTodoMsg Todo
+
 type ErrorScreenMsg struct{}
 
 func FetchTodos(m *RootModel) tea.Cmd {
@@ -44,6 +48,53 @@ func FetchTodos(m *RootModel) tea.Cmd {
 	}
 }
 
+func ToggleTodo(m *RootModel) tea.Cmd {
+	return func() tea.Msg {
+		client := &http.Client{}
+		url := "http://localhost:3000/api/todos/toggle-status/" + m.HomeView.Todos[m.HomeView.index].Id
+		req, err := http.NewRequest("PATCH", url, nil)
+		if err != nil {
+			return ErrorScreenMsg{}
+		}
+		req.Header.Add("Authorization", "Bearer "+m.Auth.Token)
+		res, err := client.Do(req)
+		if err != nil {
+			return ErrorScreenMsg{}
+		}
+		defer res.Body.Close()
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			return ErrorScreenMsg{}
+		}
+
+		var todo struct {
+			Todo Todo `form:"todo"`
+		}
+		json.Unmarshal(body, &todo)
+		m.HomeView.Todos[m.HomeView.index] = todo.Todo
+		return ToggleTodoMsg{}
+	}
+}
+
+func DeleteTodo(m *RootModel) tea.Cmd {
+	return func() tea.Msg {
+		client := &http.Client{}
+		url := "http://localhost:3000/api/todos/" + m.HomeView.Todos[m.HomeView.index].Id
+		req, err := http.NewRequest("DELETE", url, nil)
+		if err != nil {
+			return ErrorScreenMsg{}
+		}
+		req.Header.Add("Authorization", "Bearer "+m.Auth.Token)
+		res, err := client.Do(req)
+		if err != nil {
+			return ErrorScreenMsg{}
+		}
+		defer res.Body.Close()
+
+		return DeleteTodoMsg{}
+	}
+}
+
 func (m RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
@@ -55,6 +106,9 @@ func (m RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.HomeView.Todos = msg
 		m.EntryView.spinner = spinner.New()
 		return m, nil
+
+	case DeleteTodoMsg:
+		return m, tea.Cmd(FetchTodos(&m))
 
 	case ErrorScreenMsg:
 		m.Screen = "ERROR_VIEW"
@@ -92,6 +146,14 @@ func (m RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.HomeView.index < 0 {
 					m.HomeView.index = len(m.HomeView.Todos) - 1
 				}
+			case "esc":
+				return m, tea.Quit
+			case " ":
+				return m, tea.Cmd(ToggleTodo(&m))
+			case "r":
+				return m, tea.Cmd(FetchTodos(&m))
+			case "d":
+				return m, tea.Cmd(DeleteTodo(&m))
 			}
 		}
 

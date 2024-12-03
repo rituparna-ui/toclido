@@ -53,12 +53,31 @@ func BuildTodosList(m *RootModel) string {
 
 	todos := ""
 
+	if len(m.HomeView.Todos) == 0 {
+		todos = "No Todos\nPress [a] to add a new todo"
+		return fullScreen.
+			AlignHorizontal(lipgloss.Center).
+			AlignVertical(lipgloss.Center).
+			Render(todos)
+	}
+
 	for i, todo := range m.HomeView.Todos {
 		x := " "
 		if todo.Completed {
 			x = "x"
 		}
-		todoItem := fmt.Sprintf("[%s] %s\n    %s", x, todo.Title, todo.Description)
+		titleForeground := lipgloss.Color("#FF0000")
+		if todo.Completed {
+			titleForeground = lipgloss.Color("#00FF00")
+		}
+		todoItem := fmt.Sprintf("[%s] %s\n    %s",
+			x,
+			lipgloss.
+				NewStyle().
+				Strikethrough(todo.Completed).
+				Foreground(titleForeground).
+				Render(todo.Title), todo.Description)
+
 		isActive := m.HomeView.index == i
 
 		leftPad := 1
@@ -70,7 +89,7 @@ func BuildTodosList(m *RootModel) string {
 			NewStyle().
 			Width(m.Window.Width-4).
 			Border(lipgloss.RoundedBorder(), isActive).
-			BorderForeground(lipgloss.Color("#008080")).
+			BorderForeground(lipgloss.Color("#808000")).
 			Padding(leftPad, 0, leftPad, leftPad).
 			Render(todoItem)
 		todos += "\n"
@@ -80,7 +99,14 @@ func BuildTodosList(m *RootModel) string {
 }
 
 func BuildHelpMessage(m *RootModel) string {
-	return "Help Message Line 1\nHelp Message Line 2"
+	line1 := "[up/down] to navigate          [d] to delete a todo  [r]   to refresh"
+	line2 := "[space]   to toggle completed  [a] to add a todo     [esc] to exit"
+
+	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#808080"))
+	line1 = style.Render(line1)
+	line2 = style.Render(line2)
+
+	return line1 + "\n" + line2
 }
 
 func BuildHomeScreen(m *RootModel) string {
