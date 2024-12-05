@@ -81,6 +81,13 @@ class _LoginFormState extends State<LoginForm> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const Text(
+                        ' Login',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 20),
                       TextFormField(
                         keyboardType: TextInputType.emailAddress,
