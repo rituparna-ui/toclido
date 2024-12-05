@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toclido/constants.dart';
+import 'package:toclido/screens/home.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -37,11 +39,18 @@ class _LoginFormState extends State<LoginForm> {
           throw body['message'];
         }
         if (response.statusCode == 200) {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', body['token']);
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Login Successful: ${body['token']}'),
+              const SnackBar(
+                content: Text('Login Successful'),
               ),
+            );
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) {
+                return const HomeScreen();
+              }),
             );
           }
         }

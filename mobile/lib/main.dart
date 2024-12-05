@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:toclido/screens/signup.dart';
+import 'package:toclido/screens/splash.dart';
 
 void main() {
   runApp(const AppRoot());
@@ -11,7 +11,7 @@ class AppRoot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: SignupScreen(),
+      home: SplashScreen(),
     );
   }
 }
