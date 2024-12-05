@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:toclido/constants.dart';
 
 class SignupForm extends StatefulWidget {
   const SignupForm({super.key});
@@ -18,6 +22,40 @@ class _SignupFormState extends State<SignupForm> {
     final isValid = _formKey.currentState?.validate();
     if (isValid ?? false) {
       _formKey.currentState?.save();
+      try {
+        final response = await http.post(
+          Uri.parse('$apiUrl/auth/signup'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'name': name,
+            'email': email,
+            'password': password,
+          }),
+        );
+        final body = jsonDecode(response.body);
+        if (response.statusCode == 400) {
+          throw body['message'];
+        }
+        if (response.statusCode == 200) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Signup successful'),
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+            ),
+          );
+        }
+      }
     }
   }
 
