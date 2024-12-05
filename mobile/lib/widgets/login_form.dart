@@ -3,19 +3,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:toclido/constants.dart';
-import 'package:toclido/screens/login.dart';
 
-class SignupForm extends StatefulWidget {
-  const SignupForm({super.key});
+class LoginForm extends StatefulWidget {
+  const LoginForm({super.key});
 
   @override
-  State<SignupForm> createState() => _SignupFormState();
+  State<LoginForm> createState() => _LoginFormState();
 }
 
-class _SignupFormState extends State<SignupForm> {
+class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
 
-  String name = '';
   String email = '';
   String password = '';
 
@@ -25,12 +23,11 @@ class _SignupFormState extends State<SignupForm> {
       _formKey.currentState?.save();
       try {
         final response = await http.post(
-          Uri.parse('$apiUrl/auth/signup'),
+          Uri.parse('$apiUrl/auth/login'),
           headers: {
             'Content-Type': 'application/json',
           },
           body: jsonEncode({
-            'name': name,
             'email': email,
             'password': password,
           }),
@@ -42,14 +39,10 @@ class _SignupFormState extends State<SignupForm> {
         if (response.statusCode == 200) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Signup successful. Please login'),
+              SnackBar(
+                content: Text('Login Successful: ${body['token']}'),
               ),
             );
-            Navigator.of(context)
-                .pushReplacement(MaterialPageRoute(builder: (context) {
-              return const LoginScreen();
-            }));
           }
         }
       } catch (e) {
@@ -88,24 +81,6 @@ class _SignupFormState extends State<SignupForm> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Name',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your name';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          if (value != null) {
-                            name = value;
-                          }
-                        },
-                      ),
                       const SizedBox(height: 20),
                       TextFormField(
                         keyboardType: TextInputType.emailAddress,
@@ -150,7 +125,7 @@ class _SignupFormState extends State<SignupForm> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: _onSubmit,
-                          child: const Text('Signup'),
+                          child: const Text('Login'),
                         ),
                       )
                     ],
